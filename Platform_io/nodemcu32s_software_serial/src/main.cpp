@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial swSer(14, 12, false, 256);
+SoftwareSerial swSer(3, 1, false, 256);
 
 void setup()
 {
   Serial.begin(115200);
-  swSer.begin(115200);
+  swSer.begin(9600);
 
   Serial.println("\nSoftware serial test started");
 
