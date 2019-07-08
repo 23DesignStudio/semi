@@ -27,3 +27,8 @@ It's about bidirectional communications between Arduino and Unity. Serialport is
 - unity_biDirectional: unity c# scripts for gui and gameobject
 - unity_fromArduino: unity c# scripts for gui and gameobject
 - unity_toArduino: unity c# scripts for gui and gameobject
+
+## thermo
+This project is a GUI app for thermoprinter built through react.js
+
+
