@@ -44,7 +44,14 @@ function App() {
   };
 
   const hl_qrCodeData = qrcode => {
-    setData(qrcode);
+    let convertToHex = "";
+    const converToGB18030 = encoder.encode(qrcode);
+    converToGB18030.forEach(element => {
+      if (element !== null) {
+        convertToHex += "0x" + element.toString(16) + ",";
+      }
+    });
+    setData(convertToHex);
   };
 
   let inputBox = null;
