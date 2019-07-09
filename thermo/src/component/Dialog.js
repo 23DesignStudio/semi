@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Dialog = () => {
+const Dialog = props => {
   const [text, setText] = useState("");
   const [resData, setResData] = useState({ success: "", resText: "" });
 
@@ -13,9 +13,10 @@ const Dialog = () => {
     let url = "http://localhost:9000/test?data=";
     fetch(url + data)
       .then(res => res.text())
-      .then(result =>
-        setResData({ success: "已送出", resText: result.toString() })
-      );
+      .then(result => {
+        setResData({ success: "已送出", resText: result.toString() });
+        props.getData(props.getGb18030(data));
+      });
   };
 
   return (

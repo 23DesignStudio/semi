@@ -4,11 +4,11 @@ import OutputCodeBox from "./component/OutputCodeBox";
 import ImageUpload from "./component/ImageUpload";
 import InputTextBox from "./component/InputTextBox";
 import QRcode from "./component/QRcode";
-import Dialog from "./Dialog";
+import Dialog from "./component//Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("dialog");
+  const [selectedItem, setSelectedItem] = useState("image");
   // get encoded data
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
@@ -25,45 +25,42 @@ function App() {
     NONSTANDARD_allowLegacyEncoding: true
   });
 
-  const hl_wordData = text => {
-    let convertToHex = "";
-    const converToGB18030 = encoder.encode(text);
-    converToGB18030.forEach(element => {
-      if (element !== null) {
-        convertToHex += "0x" + element.toString(16) + ",";
-      }
-    });
-    setData(convertToHex);
+  const hl_getData = data => {
+    setData(data);
+    setCopySuccess(false);
   };
 
   const hl_copySuccess = success => {
     setCopySuccess(success);
   };
 
-  const hl_imageData = image => {
-    setData(image);
-  };
-
-  const hl_qrCodeData = qrcode => {
+  const hl_gb18030 = data => {
     let convertToHex = "";
-    const converToGB18030 = encoder.encode(qrcode);
+    const converToGB18030 = encoder.encode(data);
     converToGB18030.forEach(element => {
       if (element !== null) {
         convertToHex += "0x" + element.toString(16) + ",";
       }
     });
-    setData(convertToHex);
+    return convertToHex;
   };
 
   let inputBox = null;
   if (selectedItem === "word") {
-    inputBox = <InputTextBox row={5} col={50} getData={hl_wordData} />;
+    inputBox = (
+      <InputTextBox
+        row={5}
+        col={50}
+        getData={hl_getData}
+        getGb18030={hl_gb18030}
+      />
+    );
   } else if (selectedItem === "image") {
-    inputBox = <ImageUpload getData={hl_imageData} />;
+    inputBox = <ImageUpload getData={hl_getData} />;
   } else if (selectedItem === "qrcode") {
-    inputBox = <QRcode getData={hl_qrCodeData} />;
+    inputBox = <QRcode getData={hl_getData} getGb18030={hl_gb18030} />;
   } else if (selectedItem === "dialog") {
-    inputBox = <Dialog getData={hl_qrCodeData} />;
+    inputBox = <Dialog getData={hl_getData} getGb18030={hl_gb18030} />;
   }
 
   return (

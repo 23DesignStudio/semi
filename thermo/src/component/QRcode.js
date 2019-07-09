@@ -4,11 +4,12 @@ import QRCode from "qrcode.react";
 export default function QRcode(props) {
   const [url, setUrl] = useState("");
   const [qrGraph, setQrGraph] = useState(false);
+
   const hl_change = event => {
     setUrl(event.target.value);
   };
-  const hl_setUrl = () => {
-    props.getData(url);
+  const hl_onClick = () => {
+    props.getData(props.getGb18030(url));
     setQrGraph(true);
   };
   return (
@@ -18,7 +19,7 @@ export default function QRcode(props) {
         <input type="text" value={url} onChange={hl_change} />
         <br />
         <br />
-        <button onClick={hl_setUrl}>轉換</button>
+        <button onClick={hl_onClick}>轉換</button>
         <br />
         <br />
       </div>
