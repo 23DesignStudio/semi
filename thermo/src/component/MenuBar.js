@@ -15,6 +15,9 @@ export default function MenuBar(props) {
       <button type="button" name="qrcode" onClick={hl_click}>
         QR碼
       </button>
+      <button type="button" name="dialog" onClick={hl_click}>
+        及時
+      </button>
     </div>
   );
 }

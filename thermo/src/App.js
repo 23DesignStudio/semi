@@ -4,10 +4,11 @@ import OutputCodeBox from "./component/OutputCodeBox";
 import ImageUpload from "./component/ImageUpload";
 import InputTextBox from "./component/InputTextBox";
 import QRcode from "./component/QRcode";
+import Dialog from "./Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("word");
+  const [selectedItem, setSelectedItem] = useState("dialog");
   // get encoded data
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
@@ -61,6 +62,8 @@ function App() {
     inputBox = <ImageUpload getData={hl_imageData} />;
   } else if (selectedItem === "qrcode") {
     inputBox = <QRcode getData={hl_qrCodeData} />;
+  } else if (selectedItem === "dialog") {
+    inputBox = <Dialog getData={hl_qrCodeData} />;
   }
 
   return (
