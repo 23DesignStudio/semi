@@ -18,14 +18,7 @@ app.get("/test", (req, res) => {
   Serialport.write(msg);
   res.send("ok");
 });
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
-// Serialport.write("a", function(err) {
-//   if (err) {
-//     return console.log("Error on write: ", err.message);
-//   }
-//   console.log("message written");
-// });
+app.listen(port, () => console.log(`App listening on port ${port}!`));
 
 // Open errors will be emitted as an error event
 Serialport.on("error", function(err) {

@@ -8,7 +8,7 @@ import Dialog from "./component//Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("image");
+  const [selectedItem, setSelectedItem] = useState("word");
   // get encoded data
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
