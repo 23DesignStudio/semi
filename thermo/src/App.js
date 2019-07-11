@@ -102,6 +102,7 @@ function App() {
             <h2>23設計: 熱列印程式</h2>
             <MenuBar selectItem={hl_MenuBar} />
             {inputBox}
+            <code>v0.1.0</code>
           </Grid>
           <Grid item xs={6}>
             <OutputCodeBox
