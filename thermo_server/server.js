@@ -16,7 +16,7 @@ app.use(cors());
 app.get("/test", (req, res) => {
   msg = req.query.data;
   Serialport.write(msg);
-  res.send("ok");
+  res.send("sent");
 });
 app.listen(port, () => console.log(`App listening on port ${port}!`));
 

@@ -1,23 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
+import MenuButton from "./MenuButton";
 
 export default function MenuBar(props) {
-  const hl_click = e => {
-    props.selectItem(e.target.name);
+  const [colors, setColors] = useState({
+    word: true,
+    image: false,
+    qrdoce: false,
+    dialog: false
+  });
+  const hl_select = it => {
+    let tempColors = {
+      word: false,
+      image: false,
+      qrcode: false,
+      dialog: false
+    };
+    Object.assign(tempColors, { [it]: true });
+    setColors(tempColors);
+    props.selectItem(it);
   };
   return (
     <div>
-      <button type="button" name="word" onClick={hl_click}>
-        文字
-      </button>
-      <button type="button" name="image" onClick={hl_click}>
-        圖片
-      </button>
-      <button type="button" name="qrcode" onClick={hl_click}>
-        QR碼
-      </button>
-      <button type="button" name="dialog" onClick={hl_click}>
-        及時
-      </button>
+      <MenuButton
+        color={colors.word}
+        name="word"
+        value="文字"
+        getItem={hl_select}
+      />
+      <MenuButton
+        color={colors.image}
+        name="image"
+        value="圖片"
+        getItem={hl_select}
+      />
+      <MenuButton
+        color={colors.qrcode}
+        name="qrcode"
+        value="QR碼"
+        getItem={hl_select}
+      />
+      <MenuButton
+        color={colors.dialog}
+        name="dialog"
+        value="及時"
+        getItem={hl_select}
+      />
     </div>
   );
 }

@@ -14,7 +14,12 @@ const Dialog = props => {
     fetch(url + data)
       .then(res => res.text())
       .then(result => {
-        setResData({ success: "已送出", resText: result.toString() });
+        if (result === "sent") {
+          setResData({ success: "已送出", resText: result.toString() });
+        } else {
+          setResData({ success: "錯誤", resText: result.toString() });
+        }
+
         props.getData(props.getGb18030(data));
       });
   };
@@ -23,6 +28,7 @@ const Dialog = props => {
     <div>
       <h4>及時列印</h4>
       <input type="text" name="data" value={text} onChange={hl_onChangeText} />
+      &nbsp;
       <input type="submit" value="送出" onClick={() => hl_httpRequest(text)} />
       <br />
       <code>{resData.success}</code>

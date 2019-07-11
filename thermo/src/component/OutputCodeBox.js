@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 
 export default function OutputCodeBox(props) {
-  const { row, col } = props;
+  const { row, col, clearData } = props;
   const textAreaRef = useRef(null);
 
   const copyToClipboard = e => {
@@ -17,6 +17,7 @@ export default function OutputCodeBox(props) {
         <div>
           <button onClick={copyToClipboard}>複製程式碼</button>
           {props.isCopyed}
+          <button onClick={clearData}>清除</button>
         </div>
       )}
       <br />
