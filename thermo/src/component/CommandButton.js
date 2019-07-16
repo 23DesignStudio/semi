@@ -1,17 +1,13 @@
 import React from "react";
 
 const CommandButton = props => {
-  const { name, value, typeIn } = props;
+  const { string, addCmdToText } = props;
 
-  const hl_onClick = e => {
-    let name = e.target.name;
-    typeIn(name);
+  const hl_onClick = () => {
+    let temp = "<" + string + ">";
+    addCmdToText(temp);
   };
-  return (
-    <button name={name} onClick={hl_onClick}>
-      {value}
-    </button>
-  );
+  return <button onClick={hl_onClick}>{string}</button>;
 };
 
 export default CommandButton;

@@ -1,5 +1,7 @@
 # Data transcode GUI for thermoprinter
 
+version: 0.1.0
+
 <caution!> Before run this project, please install Node.js first (if you haven't done that)
 
 1. download the project

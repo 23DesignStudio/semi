@@ -1,119 +1,205 @@
 import React, { useState } from "react";
-import CommandButton from "./CommandButton";
 import CommandDropDown from "./CommandDropDown";
+import CommandButton from "./CommandButton";
 import CommandInput from "./CommandInput";
+import CommandDoubleInput from "./CommandDoubleInput";
 
 export default function InputTextBox(props) {
-  const { row, col, getData, getGb18030 } = props;
-  const [text, setText] = useState("");
-  const commandLine = {
-    init: "!",
-    newline: "\n"
-  };
-  //functions
-  const hl_change = event => {
+  const { row, col, getEncodedData, convertToGb18030 } = props;
+  const [text, setText] = useState("<初始化>");
+  const [cmdObjects, setCmdObjects] = useState({
+    init: {
+      string: "初始化",
+      unicode: "¿",
+      cmdCode: "0x1b,0x40,",
+      cmdString: "<初始化>",
+      value: ""
+    },
+    newline: {
+      string: "換行",
+      unicode: "\n",
+      cmdCode: "0x0d,0x0a,",
+      cmdString: "<換行>",
+      value: ""
+    },
+    align: {
+      string: "對齊",
+      unicode: "À",
+      cmdCode: "0x1b,0x61,",
+      cmdString: "",
+      value: ""
+    },
+    rotate: {
+      string: "旋轉",
+      unicode: "Ñ",
+      cmdCode: "0x1b,0x56,",
+      cmdString: "",
+      value: ""
+    },
+    scale: {
+      string: "字符寬高",
+      unicode: "Æ",
+      cmdCode: "0x1d,0x21,",
+      cmdString: "",
+      value: ""
+    },
+    indent: {
+      string: "左間距",
+      unicode: "Ç",
+      cmdCode: "0x1b,0x42,",
+      cmdString: "",
+      value: ""
+    },
+    lineheight: {
+      string: "行間距",
+      unicode: "Ê",
+      cmdCode: "0x1b,0x33,",
+      cmdString: "",
+      value: ""
+    },
+    pitch: {
+      string: "字符間距",
+      unicode: "Î",
+      cmdCode: "0x1b,0x20,",
+      cmdString: "",
+      value: ""
+    }
+  });
+
+  // event handler
+  const hl_onChange_inputBox = event => {
     setText(event.target.value);
   };
-  const hl_onClick = () => {
-    let data = getGb18030(text);
-    getData(data);
-  };
-  const hl_cmdButton = key => {
-    let oldText = text;
-    let tempString = commandLine[key];
-    if (tempString !== undefined) {
-      setText(oldText + tempString);
-    }
+  const hl_onClick_clearInput = () => {
+    setText("<初始化>");
   };
 
-  const hl_cmdDropDown = (code, value) => {
-    if (value !== "") {
-      let oldText = text;
-      let tempString = code + value;
-      setText(oldText + tempString);
-    }
+  // pass to childern
+  const s_addCmdToText = value => {
+    let temp = text;
+    temp += value;
+    setText(temp);
   };
 
-  const s_cmdInput = (code, value) => {
-    if (value !== "") {
-      let oldText = text;
-      let tempString = code + value;
-      setText(oldText + tempString);
-    }
+  const s_updateCmdObjects = (key, value, cmdString) => {
+    let temp = cmdObjects;
+    temp[key].value = value;
+    temp[key].cmdString = cmdString;
+    setCmdObjects(temp);
   };
-  const s_clearInput = () => {
-    setText("");
+
+  // function
+  const fn_convertTextToCode = text => {
+    let tempCmdObj = cmdObjects;
+    let tempUnicodeArray = Object.keys(tempCmdObj).map(it => {
+      return tempCmdObj[it].unicode;
+    });
+    let tempCmdCodeArray = Object.keys(tempCmdObj).map(it => {
+      return tempCmdObj[it].cmdCode;
+    });
+    // console.log(tempUnicodeArray);
+    let tempCode = text;
+    Object.keys(tempCmdObj).forEach(it => {
+      let targetString = tempCmdObj[it].cmdString;
+      if (targetString !== "") {
+        let reg = new RegExp(targetString, "g");
+        tempCode = tempCode.replace(
+          reg,
+          tempCmdObj[it].unicode + tempCmdObj[it].value
+        );
+      }
+    });
+    let encodedData = "";
+    for (let i = 0; i < tempCode.length; i++) {
+      if (tempUnicodeArray.includes(tempCode.charAt(i))) {
+        let index = tempUnicodeArray.indexOf(tempCode.charAt(i));
+        encodedData += tempCmdCodeArray[index];
+      } else {
+        encodedData +=
+          "0x" +
+          convertToGb18030(tempCode.charAt(i)) +
+          (i === tempCode.length - 1 ? "" : ",");
+      }
+    }
+    getEncodedData(encodedData);
   };
 
   return (
     <div>
       <div>
-        <h4>文字資料</h4>
-        <CommandButton name="init" value="初始化" typeIn={hl_cmdButton} />
-        <CommandButton name="newline" value="換行" typeIn={hl_cmdButton} />
-        <br />
-        <br />
-        {/* <CommandInput
-          code="$"
-          name="字符寬度 "
-          unit="倍"
-          min={1}
-          max={8}
-          getValue={s_cmdInput}
+        <h4>指令列</h4>
+        <CommandDropDown
+          propkey={"align"}
+          string={cmdObjects.align.string}
+          items={{ 請選擇: null, 左: "0x0030", 中: "0x0031", 右: "0x0032" }}
+          addCmdToText={s_addCmdToText}
+          updateCmdObjects={s_updateCmdObjects}
         />
-        <br />
-        <CommandInput
-          code=""
-          name="字符高度 "
-          unit="倍"
-          min={1}
-          max={8}
-          getValue={s_cmdInput}
+        <CommandDropDown
+          propkey={"rotate"}
+          string={cmdObjects.rotate.string}
+          items={{ 請選擇: null, "0度": "0x0030", "90度": "0x0031" }}
+          addCmdToText={s_addCmdToText}
+          updateCmdObjects={s_updateCmdObjects}
         />
-        <br />
         <CommandInput
-          code="%"
-          name="左間距 "
-          unit=""
+          propkey={"indent"}
+          string={cmdObjects.indent.string}
+          unit={"字符"}
           min={1}
           max={30}
-          getValue={s_cmdInput}
+          addCmdToText={s_addCmdToText}
+          updateCmdObjects={s_updateCmdObjects}
         />
-        <br />
         <CommandInput
-          code="("
-          name="行間距 "
-          unit=""
+          propkey={"lineheight"}
+          string={cmdObjects.lineheight.string}
+          unit={"x 0.125mm"}
           min={1}
           max={255}
-          getValue={s_cmdInput}
+          addCmdToText={s_addCmdToText}
+          updateCmdObjects={s_updateCmdObjects}
         />
-        <br />
         <CommandInput
-          code=")"
-          name="字符間距 "
-          unit=""
+          propkey={"pitch"}
+          string={cmdObjects.pitch.string}
+          unit={"x 0.125mm"}
           min={1}
           max={255}
-          getValue={s_cmdInput}
+          addCmdToText={s_addCmdToText}
+          updateCmdObjects={s_updateCmdObjects}
         />
-        <br /> */}
-        <CommandDropDown
-          code="#"
-          items={{ 對齊方式: "", 左: "0", 中: "1", 右: "2" }}
-          getSelect={hl_cmdDropDown}
+        <CommandDoubleInput
+          propkey={"scale"}
+          string={cmdObjects.scale.string}
+          unit={"寬x高(倍數)"}
+          min={1}
+          max={8}
+          addCmdToText={s_addCmdToText}
+          updateCmdObjects={s_updateCmdObjects}
         />
-        <CommandDropDown
-          code="*"
-          items={{ 字符旋轉: "", "0度": "0", "90度": "1" }}
-          getSelect={hl_cmdDropDown}
+        <CommandButton
+          string={cmdObjects.init.string}
+          addCmdToText={s_addCmdToText}
         />
         <br />
         <br />
-        <textarea rows={row} cols={col} value={text} onChange={hl_change} />
+        <h4>文字資料</h4>
+        <textarea
+          rows={row}
+          cols={col}
+          value={text}
+          onChange={hl_onChange_inputBox}
+        />
         <div>
-          <button onClick={hl_onClick}>轉換</button>
-          <button onClick={s_clearInput}>清除</button>
+          <button
+            onClick={() => {
+              fn_convertTextToCode(text);
+            }}
+          >
+            轉換
+          </button>
+          <button onClick={hl_onClick_clearInput}>清除</button>
         </div>
       </div>
     </div>

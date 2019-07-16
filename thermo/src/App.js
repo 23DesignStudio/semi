@@ -21,58 +21,49 @@ import Dialog from "./component//Dialog";
 function App() {
   // menu state
   const [selectedItem, setSelectedItem] = useState("word");
-  // get encoded data
+  // encoded data for output
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
   const [copySuccess, setCopySuccess] = useState(false);
-  const cmdArray = {
-    33: "0x1b,0x40,",
-    10: "0x0d,0x0a,",
-    35: "0x1b,0x61,",
-    36: "0x1d,0x21,",
-    37: "0x1b,0x42,",
-    40: "0x1b,0x33,",
-    41: "0x1b,0x20,",
-    42: "0x1b,0x56,"
-  };
-
-  const hl_MenuBar = it => {
-    setSelectedItem(it);
-    setData("");
-    setCopySuccess(false);
-  };
 
   // gb18030 encoder
   const encoder = new TextEncoder("gb18030", {
     NONSTANDARD_allowLegacyEncoding: true
   });
+  ////pass to childern
 
-  const hl_getData = data => {
-    setData(data);
+  // handle click event to select item from menu
+  const s_MenuBar = it => {
+    setSelectedItem(it);
+    setData("");
     setCopySuccess(false);
   };
 
-  const hl_copySuccess = success => {
+  //convert character to gb18030
+  const fn_gb18030 = character => {
+    let c = encoder.encode(character)[0];
+    let cHex = "";
+    if (c < 16) {
+      cHex = "0" + c.toString(16);
+    } else {
+      cHex = c.toString(16);
+    }
+
+    return cHex;
+  };
+  // get encoded data from childern for output
+  const s_getData = encodeData => {
+    setData(encodeData);
+    setCopySuccess(false);
+  };
+
+  // handle output click event, check
+  const s_copySuccess = success => {
     setCopySuccess(success);
   };
-
+  // handle output click event, check if encoded data is copied to clipboard
   const s_clearOutput = () => {
     setData("");
-  };
-
-  const hl_gb18030 = data => {
-    let convertToHex = "";
-    const converToGB18030 = encoder.encode(data);
-    converToGB18030.forEach(element => {
-      if (element !== null) {
-        if (cmdArray.hasOwnProperty(element)) {
-          convertToHex += cmdArray[element];
-        } else {
-          convertToHex += "0x" + element.toString(16) + ",";
-        }
-      }
-    });
-    return convertToHex;
   };
 
   let inputBox = null;
@@ -81,16 +72,20 @@ function App() {
       <InputTextBox
         row={8}
         col={50}
-        getData={hl_getData}
-        getGb18030={hl_gb18030}
+        getEncodedData={s_getData}
+        convertToGb18030={fn_gb18030}
       />
     );
   } else if (selectedItem === "image") {
-    inputBox = <ImageUpload getData={hl_getData} />;
+    inputBox = <ImageUpload getEncodedData={s_getData} />;
   } else if (selectedItem === "qrcode") {
-    inputBox = <QRcode getData={hl_getData} getGb18030={hl_gb18030} />;
+    inputBox = (
+      <QRcode getEncodedData={s_getData} convertToGb18030={fn_gb18030} />
+    );
   } else if (selectedItem === "dialog") {
-    inputBox = <Dialog getData={hl_getData} getGb18030={hl_gb18030} />;
+    inputBox = (
+      <Dialog getEncodedData={s_getData} convertToGb18030={fn_gb18030} />
+    );
   }
 
   return (
@@ -100,9 +95,9 @@ function App() {
         <Grid container>
           <Grid item xs={6}>
             <h2>23設計: 熱列印程式</h2>
-            <MenuBar selectItem={hl_MenuBar} />
+            <MenuBar selectItem={s_MenuBar} />
             {inputBox}
-            <code>v0.1.0</code>
+            <code>v0.1.1</code>
           </Grid>
           <Grid item xs={6}>
             <OutputCodeBox
@@ -110,7 +105,7 @@ function App() {
               col={60}
               value={data}
               isCopyed={copySuccess ? "已複製" : ""}
-              setSuccess={hl_copySuccess}
+              setSuccess={s_copySuccess}
               clearData={s_clearOutput}
             />
           </Grid>

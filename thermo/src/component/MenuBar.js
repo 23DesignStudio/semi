@@ -8,7 +8,9 @@ export default function MenuBar(props) {
     qrdoce: false,
     dialog: false
   });
-  const hl_select = it => {
+
+  ////pass to childern
+  const s_select = it => {
     let tempColors = {
       word: false,
       image: false,
@@ -25,25 +27,25 @@ export default function MenuBar(props) {
         color={colors.word}
         name="word"
         value="文字"
-        getItem={hl_select}
+        getItem={s_select}
       />
       <MenuButton
         color={colors.image}
         name="image"
         value="圖片"
-        getItem={hl_select}
+        getItem={s_select}
       />
       <MenuButton
         color={colors.qrcode}
         name="qrcode"
         value="QR碼"
-        getItem={hl_select}
+        getItem={s_select}
       />
       <MenuButton
         color={colors.dialog}
         name="dialog"
         value="及時"
-        getItem={hl_select}
+        getItem={s_select}
       />
     </div>
   );
