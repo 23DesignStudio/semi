@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 
 const Dialog = props => {
+  const { setEncodedData, convertToGb18030 } = props;
   const [text, setText] = useState("");
   const [resData, setResData] = useState({ success: "", resText: "" });
 
   const hl_onChangeText = e => {
     setText(e.target.value);
+    setResData({ success: "", resText: "" });
+  };
+
+  const hl_onClick_clearAll = () => {
+    setText("");
     setResData({ success: "", resText: "" });
   };
 
@@ -19,8 +25,15 @@ const Dialog = props => {
         } else {
           setResData({ success: "錯誤", resText: result.toString() });
         }
+        if (text !== "") {
+          let encodedData = "";
+          for (let c of text) {
+            let cHex = convertToGb18030(c);
+            encodedData += "0x" + cHex + ",";
+          }
 
-        props.getData(props.getGb18030(data));
+          setEncodedData(encodedData);
+        }
       });
   };
 
@@ -30,6 +43,7 @@ const Dialog = props => {
       <input type="text" name="data" value={text} onChange={hl_onChangeText} />
       &nbsp;
       <input type="submit" value="送出" onClick={() => hl_httpRequest(text)} />
+      <button onClick={hl_onClick_clearAll}>清除</button>
       <br />
       <code>{resData.success}</code>
     </div>

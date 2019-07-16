@@ -5,7 +5,7 @@ import CommandInput from "./CommandInput";
 import CommandDoubleInput from "./CommandDoubleInput";
 
 export default function InputTextBox(props) {
-  const { row, col, getEncodedData, convertToGb18030 } = props;
+  const { row, col, setEncodedData, convertToGb18030 } = props;
   const [text, setText] = useState("<初始化>");
   const [cmdObjects, setCmdObjects] = useState({
     init: {
@@ -121,7 +121,7 @@ export default function InputTextBox(props) {
           (i === tempCode.length - 1 ? "" : ",");
       }
     }
-    getEncodedData(encodedData);
+    setEncodedData(encodedData);
   };
 
   return (

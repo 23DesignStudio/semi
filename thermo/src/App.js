@@ -20,7 +20,7 @@ import Dialog from "./component//Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("word");
+  const [selectedItem, setSelectedItem] = useState("qrcode");
   // encoded data for output
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
@@ -52,7 +52,7 @@ function App() {
     return cHex;
   };
   // get encoded data from childern for output
-  const s_getData = encodeData => {
+  const s_setData = encodeData => {
     setData(encodeData);
     setCopySuccess(false);
   };
@@ -72,19 +72,19 @@ function App() {
       <InputTextBox
         row={8}
         col={50}
-        getEncodedData={s_getData}
+        setEncodedData={s_setData}
         convertToGb18030={fn_gb18030}
       />
     );
   } else if (selectedItem === "image") {
-    inputBox = <ImageUpload getEncodedData={s_getData} />;
+    inputBox = <ImageUpload setEncodedData={s_setData} />;
   } else if (selectedItem === "qrcode") {
     inputBox = (
-      <QRcode getEncodedData={s_getData} convertToGb18030={fn_gb18030} />
+      <QRcode setEncodedData={s_setData} convertToGb18030={fn_gb18030} />
     );
   } else if (selectedItem === "dialog") {
     inputBox = (
-      <Dialog getEncodedData={s_getData} convertToGb18030={fn_gb18030} />
+      <Dialog setEncodedData={s_setData} convertToGb18030={fn_gb18030} />
     );
   }
 
@@ -97,7 +97,7 @@ function App() {
             <h2>23設計: 熱列印程式</h2>
             <MenuBar selectItem={s_MenuBar} />
             {inputBox}
-            <code>v0.1.1</code>
+            <code>v0.1.4</code>
           </Grid>
           <Grid item xs={6}>
             <OutputCodeBox
