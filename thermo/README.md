@@ -1,8 +1,8 @@
 # Data transcode GUI for thermoprinter
 
-version: 0.1.0
+version: 0.1.4
 
-<caution!> Before run this project, please install Node.js first (if you haven't done that)
+<caution!> Before run this project, please install Node.js first.
 
 1. download the project
 2. use terminal or other command line tool to execute "npm install" to build the project
