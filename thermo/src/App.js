@@ -20,7 +20,7 @@ import Dialog from "./component//Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("qrcode");
+  const [selectedItem, setSelectedItem] = useState("word");
   // encoded data for output
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
@@ -95,7 +95,7 @@ function App() {
         <Grid container>
           <Grid item xs={6}>
             <h2>23設計: 熱列印程式</h2>
-            <MenuBar selectItem={s_MenuBar} />
+            <MenuBar selecselectItem={s_MenuBar} />
             {inputBox}
             <code>v0.1.4</code>
           </Grid>
