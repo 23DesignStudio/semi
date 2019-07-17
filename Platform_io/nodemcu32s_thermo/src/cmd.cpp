@@ -1,0 +1,4 @@
+#include "Arduino.h"
+const byte THERMO_INIT[] = {0x1b, 0x40};
+const byte THERMO_TEST[] = {0x1B, 0x40, 0x12, 0x54};
+const byte THERMO_PRINT[] = {0x0D, 0x0A};

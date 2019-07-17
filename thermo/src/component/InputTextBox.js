@@ -115,10 +115,8 @@ export default function InputTextBox(props) {
         let index = tempUnicodeArray.indexOf(tempCode.charAt(i));
         encodedData += tempCmdCodeArray[index];
       } else {
-        encodedData +=
-          "0x" +
-          convertToGb18030(tempCode.charAt(i)) +
-          (i === tempCode.length - 1 ? "" : ",");
+        encodedData += "0x" + convertToGb18030(tempCode.charAt(i));
+        console.log(tempCode.charAt(i));
       }
     }
     setEncodedData(encodedData);

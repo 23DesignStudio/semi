@@ -20,7 +20,7 @@ import Dialog from "./component//Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("word");
+  const [selectedItem, setSelectedItem] = useState("dialog");
   // encoded data for output
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
@@ -30,6 +30,7 @@ function App() {
   const encoder = new TextEncoder("gb18030", {
     NONSTANDARD_allowLegacyEncoding: true
   });
+
   ////pass to childern
 
   // handle click event to select item from menu
@@ -41,16 +42,32 @@ function App() {
 
   //convert character to gb18030
   const fn_gb18030 = character => {
-    let c = encoder.encode(character)[0];
     let cHex = "";
-    if (c < 16) {
-      cHex = "0" + c.toString(16);
+    let c = encoder.encode(character);
+    if (c.length > 1) {
+      cHex = c[0].toString(16) + ",0x" + c[1].toString(16) + ",";
     } else {
-      cHex = c.toString(16);
+      if (c[0] < 16) {
+        cHex = "0" + c[0].toString(16) + ",";
+      } else {
+        cHex = c[0].toString(16) + ",";
+      }
     }
 
     return cHex;
   };
+
+  const fn_decGb18030 = character => {
+    let code = "";
+    let dec = encoder.encode(character);
+    if (dec.length > 1) {
+      code = dec[0].toString() + "," + dec[1].toString() + ",";
+    } else {
+      code = dec[0].toString() + ",";
+    }
+    return code;
+  };
+
   // get encoded data from childern for output
   const s_setData = encodeData => {
     setData(encodeData);
@@ -84,7 +101,7 @@ function App() {
     );
   } else if (selectedItem === "dialog") {
     inputBox = (
-      <Dialog setEncodedData={s_setData} convertToGb18030={fn_gb18030} />
+      <Dialog setEncodedData={s_setData} convertToGb18030={fn_decGb18030} />
     );
   }
 
@@ -95,7 +112,7 @@ function App() {
         <Grid container>
           <Grid item xs={6}>
             <h2>23設計: 熱列印程式</h2>
-            <MenuBar selecselectItem={s_MenuBar} />
+            <MenuBar selectItem={s_MenuBar} />
             {inputBox}
             <code>v0.1.4</code>
           </Grid>
