@@ -20,11 +20,12 @@ import Dialog from "./component//Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("dialog");
+  const [selectedItem, setSelectedItem] = useState("word");
   // encoded data for output
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
   const [copySuccess, setCopySuccess] = useState(false);
+  const version = "0.1.6";
 
   // gb18030 encoder
   const encoder = new TextEncoder("gb18030", {
@@ -114,7 +115,7 @@ function App() {
             <h2>23設計: 熱列印程式</h2>
             <MenuBar selectItem={s_MenuBar} />
             {inputBox}
-            <code>v0.1.4</code>
+            <code>{version}</code>
           </Grid>
           <Grid item xs={6}>
             <OutputCodeBox
