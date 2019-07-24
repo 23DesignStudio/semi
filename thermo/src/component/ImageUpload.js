@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import getPixels from "get-pixels";
 import CommandImageDropDown from "./CommandImageDropdown";
+import CommandImageButton from "./CommandImageButton";
+import CommandImageInput from "./CommandImageInput";
 
 export default function ImageUpload(props) {
   const [fileLoaded, setFileLoaded] = useState("");
@@ -9,22 +11,41 @@ export default function ImageUpload(props) {
     dataUrl: null,
     pixels: null
   });
-  const [cmbLine, setComdLine] = useState("");
+  const [cmdLine, setCmdLine] = useState({
+    init: "",
+    align: "",
+    indent: "",
+    mode: "",
+    bitmap: ""
+  });
+  const [cmdText, setCmdText] = useState("");
 
   let reader = new FileReader();
 
-  const s_setCommand = value => {
-    setComdLine(value);
+  const s_setCommand = (key, value) => {
+    let temp = cmdLine;
+    temp[key] = value;
+    setCmdLine(temp);
+
+    let newText = fn_cmdObjToString(temp);
+    setCmdText(newText);
   };
 
   const s_clearAll = () => {
-    setComdLine("");
+    setCmdLine({
+      init: "",
+      align: "",
+      indent: "",
+      mode: "",
+      bitmap: ""
+    });
     setRawImage({
       shape: null,
       dataUrl: null,
       pixels: null
     });
     setFileLoaded("");
+    setCmdText("");
     reader.abort();
   };
 
@@ -40,6 +61,21 @@ export default function ImageUpload(props) {
             return;
           }
           const [width, height, channel] = pixels.shape.slice();
+          let mode_width = Math.floor(width / 8);
+          if (mode_width < 16) {
+            mode_width = "0x0" + mode_width.toString(16);
+          } else {
+            mode_width = "0x" + mode_width.toString(16);
+          }
+          let mode_height = Math.floor(height / 8);
+          if (mode_height < 16) {
+            mode_height = "0x0" + mode_height.toString(16);
+          } else {
+            mode_height = "0x" + mode_height.toString(16);
+          }
+          let mode_code = "0x1d,0x2a," + mode_width + "," + mode_height + ",\n";
+          s_setCommand("mode", mode_code);
+
           setRawImage({
             shape: { width: width, height: height, channel: channel },
             dataUrl: reader.result,
@@ -80,8 +116,17 @@ export default function ImageUpload(props) {
           binaryArray.push("0x" + fn_binToHex(binaryString));
         }
       }
-      let encodedData = cmbLine + binaryArray.toString();
-      props.setEncodedData(encodedData);
+      if (cmdLine["bitmap"] !== "") {
+        let encodedData =
+          cmdText +
+          binaryArray.toString() +
+          ",\n0x0d,0x0a,\n" +
+          cmdLine["bitmap"];
+
+        props.setEncodedData(encodedData);
+      } else {
+        alert("請選擇<列印位圖>模式");
+      }
     }
   };
 
@@ -90,6 +135,31 @@ export default function ImageUpload(props) {
       return acc + parseInt(i, 2).toString(16);
     }, "");
   };
+
+  const fn_cmdObjToString = cmdObj => {
+    let cmdString = "";
+    Object.entries(cmdObj).forEach(([key, value]) => {
+      if (key !== "bitmap") {
+        cmdString += value;
+      }
+    });
+    return cmdString;
+  };
+
+  let debugText = "";
+  let dict = {
+    init: "初始化",
+    align: "對齊",
+    indent: "左間距",
+    mode: "定義位圖模式",
+    bitmap: "列印位圖"
+  };
+
+  Object.entries(cmdLine).forEach(([key, value]) => {
+    if (dict.hasOwnProperty(key)) {
+      debugText += dict[key] + ": " + value + " | ";
+    }
+  });
 
   return (
     <div>
@@ -113,8 +183,16 @@ export default function ImageUpload(props) {
               <code>
                 Width:{rawImage.shape.width} / Height:{rawImage.shape.height}
               </code>
+              <CommandImageButton
+                string={"初始化"}
+                cmd={"init"}
+                cmdCode={"0x1b,0x40,\n"}
+                setCommand={s_setCommand}
+              />
+              <br />
               <CommandImageDropDown
-                string={"對齊"}
+                string={"對齊 "}
+                cmd={"align"}
                 cmdCode={"0x1b,0x61,"}
                 items={{
                   請選擇: null,
@@ -124,6 +202,31 @@ export default function ImageUpload(props) {
                 }}
                 setCommand={s_setCommand}
               />
+              <br />
+              <CommandImageInput
+                string={"左間距 "}
+                cmd={"indent"}
+                cmdCode={"0x1b,0x42,"}
+                min={1}
+                max={30}
+                setCommand={s_setCommand}
+              />
+              <br />
+              <CommandImageDropDown
+                string={"列印位圖 "}
+                cmd={"bitmap"}
+                cmdCode={"0x1d,0x2f,"}
+                items={{
+                  請選擇: null,
+                  普通: "0x30",
+                  倍寬: "0x31",
+                  倍高: "0x32",
+                  雙倍: "0x33"
+                }}
+                setCommand={s_setCommand}
+              />
+              <br />
+              <p>{debugText}</p>
             </div>
           )}
           <br />

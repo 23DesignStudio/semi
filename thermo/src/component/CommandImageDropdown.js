@@ -1,7 +1,7 @@
 import React from "react";
 
 const CommandImageDropDown = props => {
-  const { string, cmdCode, items, setCommand } = props;
+  const { string, cmd, cmdCode, items, setCommand } = props;
   const optionGroup = Object.keys(items).map(key => (
     <option value={key} key={key}>
       {key}
@@ -15,7 +15,8 @@ const CommandImageDropDown = props => {
         onChange={e => {
           let value = items[e.target.value];
           if (value !== null) {
-            setCommand(cmdCode + value + "\n");
+            let code = cmdCode + value + ",\n";
+            setCommand(cmd, code);
           } else {
             setCommand("");
           }
