@@ -20,12 +20,12 @@ import Dialog from "./component//Dialog";
 
 function App() {
   // menu state
-  const [selectedItem, setSelectedItem] = useState("image");
+  const [selectedItem, setSelectedItem] = useState("word");
   // encoded data for output
   const [data, setData] = useState("");
   // check if encoded data is copied to clipboard
   const [copySuccess, setCopySuccess] = useState(false);
-  const version = "0.2.0";
+  const version = "0.2.3";
 
   // gb18030 encoder
   const encoder = new TextEncoder("gb18030", {
