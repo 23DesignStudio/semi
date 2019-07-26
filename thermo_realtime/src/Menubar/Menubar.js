@@ -1,14 +1,19 @@
 import React from "react";
+
+// material ui
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+
+// components
 import Tabpanel from "./Tabpanel";
+import Word from "../Word/Word";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1,
-    backgroundColor: "theme.palette.background.paper"
+    flexGrow: 1
+    // backgroundColor: "theme.palette.background.paper"
   }
 }));
 
@@ -29,7 +34,7 @@ const Menubar = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color={"default"}>
+      <AppBar position="static" color={"primary"}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -41,7 +46,7 @@ const Menubar = () => {
         </Tabs>
       </AppBar>
       <Tabpanel value={value} index={0}>
-        Item One
+        <Word />
       </Tabpanel>
       <Tabpanel value={value} index={1}>
         Item Two
