@@ -37,13 +37,13 @@ function App() {
       <Container>
         <Typography variant="h5">Thermal Printer 0.3.0</Typography>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={8}>
             <Paper>
               <Menubar />
               <DebugOutput />
             </Paper>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <Paper>
               <Output />
             </Paper>

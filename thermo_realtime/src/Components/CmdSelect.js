@@ -5,12 +5,14 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 
 const CmdSelect = props => {
-  const { propKey, name, code, items, setValue } = props;
-  const [select, setSelect] = useState("");
+  const { propKey, name, code, valuePair, items, helper, setValue } = props;
+  const [select, setSelect] = useState(items[0]);
   const hl_onChange = e => {
     let _select = e.target.value;
     setSelect(_select);
-    setValue(propKey, _select);
+    let _index = items.indexOf(_select);
+    let _codeString = code + valuePair[_index];
+    setValue(propKey, _codeString);
   };
   return (
     <TextField
@@ -18,9 +20,9 @@ const CmdSelect = props => {
       value={select}
       label={name}
       onChange={hl_onChange}
-      margin="normal"
+      margin="dense"
       variant="outlined"
-      helperText="選擇對齊位置"
+      helperText={helper}
     >
       {items.map((value, index) => (
         <MenuItem key={index} value={value}>

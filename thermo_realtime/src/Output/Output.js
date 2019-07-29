@@ -4,13 +4,13 @@ import Sketch from "../Sketch/Sketch";
 
 const Output = () => {
   //const [renderStatus, changeRenderStatus] = useState(false);
-  const [canvasSize, setCanvasSize] = useState({ width: 590, height: 540 });
+  const [canvasSize, setCanvasSize] = useState({ width: 300, height: 540 });
 
   // No condition
   useEffect(() => {
     const hl_resize = event => {
-      let tempWidth = Math.floor((event.target.innerWidth * 0.94) / 2);
-      let tempHeight = Math.floor(event.target.innerHeight * 0.8);
+      let tempWidth = Math.floor((event.target.innerWidth * 0.94) / 3);
+      let tempHeight = Math.floor(event.target.innerHeight * 0.95);
 
       setCanvasSize({ width: tempWidth, height: tempHeight });
     };

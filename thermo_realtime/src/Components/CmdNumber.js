@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-
-//material ui
 //material ui
 import TextField from "@material-ui/core/TextField";
 
 const CmdNumber = props => {
-  const { propKey, name, code, range, setValue } = props;
+  const { propKey, name, code, range, helper, setValue } = props;
   const [number, setNumber] = useState(1);
   const hl_onChange = e => {
     let _number = e.target.value;
@@ -23,9 +21,9 @@ const CmdNumber = props => {
       type="number"
       value={number}
       onChange={hl_onChange}
-      margin="normal"
+      margin="dense"
       variant="outlined"
-      helperText="行高 = 變數 x 0.125mm"
+      helperText={helper}
     />
   );
 };
