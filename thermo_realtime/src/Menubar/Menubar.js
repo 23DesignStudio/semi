@@ -24,7 +24,8 @@ function a11yProps(index) {
   };
 }
 
-const Menubar = () => {
+const Menubar = props => {
+  const setDebugText = props.setDebugText;
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -46,7 +47,7 @@ const Menubar = () => {
         </Tabs>
       </AppBar>
       <Tabpanel value={value} index={0}>
-        <Word />
+        <Word setDebugText={setDebugText} />
       </Tabpanel>
       <Tabpanel value={value} index={1}>
         Item Two

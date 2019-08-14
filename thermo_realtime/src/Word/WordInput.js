@@ -4,12 +4,21 @@ import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
-const WordInput = () => {
+const WordInput = props => {
   const [inputText, setInputText] = useState("");
+  const setText = props.setText;
 
-  const s_onChange_inputText = e => {
+  const hl_onChange_inputText = e => {
     let _inputText = e.target.value;
     setInputText(_inputText);
+  };
+
+  const hl_onClick_setText = () => {
+    setText(inputText);
+  };
+
+  const hl_onClick_clearAll = text => {
+    setInputText("");
   };
 
   return (
@@ -23,10 +32,23 @@ const WordInput = () => {
         margin="normal"
         variant="outlined"
         value={inputText}
-        onChange={s_onChange_inputText}
+        onChange={hl_onChange_inputText}
       />
-      <Button variant="outlined" color="secondary">
-        送出
+      <Button
+        size="small"
+        variant="outlined"
+        color="primary"
+        onClick={hl_onClick_setText}
+      >
+        確定
+      </Button>
+      <Button
+        size="small"
+        variant="outlined"
+        color="secondary"
+        onClick={hl_onClick_clearAll}
+      >
+        清除
       </Button>
     </div>
   );
