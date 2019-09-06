@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#define PUL 27 //define Pulse pin
-#define DIR 14 //define Direction pin
-#define IR 12  //IR sensor pin
+#define PUL 12      //define Pulse pin
+#define DIR 14      //define Direction pin
+#define IR_LEFT 26  //IR sensor 1
+#define IR_RIGHT 27 //IR sensor 2
 #define NUM_LEDS 16
 #define LED 22 //WS2812
 
@@ -17,10 +18,12 @@ unsigned long motorTimer = 0;
 unsigned long touchTimer = 0;
 unsigned long motorInterval = 5;
 
-int res = 0;
-bool isInit = 0;
+bool isInit = 1;
 bool shouldShutdown = 0;
-int direction = 1;
+bool direction = 1; //1 : cw; -1 : ccw
+bool pulseState = 0;
+
+int step_counter = 0;
 
 //FastLED
 CRGB leds[NUM_LEDS];
@@ -29,29 +32,13 @@ void setup()
 {
   pinMode(PUL, OUTPUT);
   pinMode(DIR, OUTPUT);
-  pinMode(IR, INPUT);
+  pinMode(IR_LEFT, INPUT);
+  pinMode(IR_RIGHT, INPUT);
 
-  digitalWrite(DIR, 0); //clockwise
-  digitalWrite(PUL, 0);
+  digitalWrite(DIR, 0); //ccw
+  digitalWrite(PUL, pulseState);
 
   Serial.begin(9600);
-  delay(5000);
-  Serial.println("...Init...");
-  delay(1000);
-  Serial.println("...Finding Zero...");
-
-  while (!isInit)
-  {
-    timer = millis();
-    run(2);
-    if (digitalRead(IR))
-    {
-      isInit = 1;
-      digitalWrite(PUL, 0);
-      res = 0;
-      Serial.println("...Zero is Found...");
-    }
-  }
   showLed();
 }
 
@@ -60,48 +47,50 @@ void loop()
   while (isInit)
   {
     timer = millis();
-    if (digitalRead(IR))
-    {
-      res = 0;
-    }
     shutdownDevice();
     changeDirection();
-    run(2);
+    run(1);
   }
 }
 
 void run(unsigned long interval)
 {
+
   if (timer - motorTimer > interval)
   {
-    digitalWrite(PUL, 1);
-    res += direction;
+    pulseState = !pulseState;
+    digitalWrite(PUL, pulseState);
+    step_counter += direction;
     motorTimer = timer;
   }
 }
 
 void changeDirection()
 {
-  if (res > 100)
+  if (digitalRead(IR_RIGHT))
   {
-    digitalWrite(DIR, 1); //counter clockwise
-    direction = -1;
-  }
-  else if (res < -100)
-  {
-    digitalWrite(DIR, 0); //clockwise
+    digitalWrite(DIR, 0); //ccw
     direction = 1;
+    Serial.print('step: ');
+    Serial.println(step_counter);
+  }
+  else if (digitalRead(IR_LEFT))
+  {
+    digitalWrite(DIR, 1); //ccw
+    direction = -1;
+    Serial.print('step: ');
+    Serial.println(step_counter);
   }
 }
 
 void shutdownDevice()
 {
-  if (touchRead(T0) < 20)
+  if (shouldShutdown != 1 && touchRead(T0) < 20)
   {
     shouldShutdown = 1;
     Serial.println("...Shutdown Device...");
   }
-  if (shouldShutdown && digitalRead(IR))
+  if (shouldShutdown && digitalRead(IR_RIGHT))
   {
     Serial.println("...Device is off...");
     isInit = 0;
