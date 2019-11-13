@@ -1,12 +1,14 @@
 #include <Arduino.h>
-#define DATA_PIN 17
-#define CLK_PIN 4
-#define LATCH_PIN 16
+#define DATA_PIN 2
+#define CLK_PIN 21
+#define LATCH_PIN 4
+#define O_NINEPIN 22
 
 //http://coopermaa2nd.blogspot.com/2010/12/arduino-lab12-74hc595-16-led.html
 
 void btnLightControl();
-bool btnSates[] = {1, 1, 1, 1, 1, 1, 1, 1}; // btn intial state
+bool btnSates[] = {1, 1, 1, 1, 1, 1, 1, 1, 1}
+; // btn intial state
 
 void setup()
 {
@@ -14,6 +16,7 @@ void setup()
   pinMode(DATA_PIN, OUTPUT);
   pinMode(CLK_PIN, OUTPUT);
   pinMode(LATCH_PIN, OUTPUT);
+  pinMode(O_NINEPIN, OUTPUT);
 
   // init btns
   btnLightControl(); // turn all lights off
@@ -43,9 +46,10 @@ void btnLightControl()
   for (i = 0; i < 8; i++)
   {
     int index = 7 - i;
-    digitalWrite(DATA_PIN, btnSates[index]); 
+    digitalWrite(DATA_PIN, btnSates[index]);
     digitalWrite(CLK_PIN, HIGH);
     digitalWrite(CLK_PIN, LOW);
   }
   digitalWrite(LATCH_PIN, HIGH);
+  digitalWrite(O_NINEPIN, btnSates[8]);
 }

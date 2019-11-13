@@ -1,13 +1,14 @@
 #include <Arduino.h>
-#define CLKPIN 33
-#define LATCHPIN 32
-#define DATAPIN 34
+#define CLKPIN 32
+#define LATCHPIN 33
+#define DATAPIN 35
+#define I_NINEPIN 36
 
 //https://www.arduino.cc/en/tutorial/ShiftIn
 //https://assets.nexperia.com/documents/data-sheet/HEF4021B.pdf
 
 long timer, timeStep, serialTimer, serialTimeStep, globalTimer;
-char btnState[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+char btnState[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
 char pressedBtn;
 
 void setup()
@@ -20,13 +21,14 @@ void setup()
   pinMode(LATCHPIN, OUTPUT);
   pinMode(CLKPIN, OUTPUT);
   pinMode(DATAPIN, INPUT);
+  pinMode(I_NINEPIN, INPUT);
 
   pressedBtn = 'q';
 
   //timer
   globalTimer = millis();
   timer = globalTimer;
-  timeStep = 1000;
+  timeStep = 30;
   serialTimer = globalTimer;
   serialTimeStep = 1000;
 }
@@ -50,6 +52,9 @@ void loop()
       if (_value)
       {
         pressedBtn = btnState[i];
+        //Serial.println("====================");
+        Serial.println(pressedBtn);
+        //Serial.println(" is pressed.");
         break;
       }
       else
@@ -58,18 +63,19 @@ void loop()
       }
       digitalWrite(CLKPIN, 1);
     }
-
-    timer = globalTimer;
-  }
-
-  if (globalTimer - serialTimer > serialTimeStep)
-  {
-    if (pressedBtn != 'q')
+    int _pinValue = digitalRead(I_NINEPIN);
+    if (_pinValue)
     {
+      pressedBtn = btnState[8];
       Serial.println("====================");
       Serial.print(pressedBtn);
       Serial.println(" is pressed.");
     }
-    serialTimer = globalTimer;
+    else
+    {
+      pressedBtn = 'q';
+    }
+
+    timer = globalTimer;
   }
 }
