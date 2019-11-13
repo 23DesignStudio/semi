@@ -1,20 +1,22 @@
 #include <Arduino.h>
 //4021
-#define I_CLKPIN 33
-#define I_LATCHPIN 32
-#define I_DATAPIN 34
+#define I_CLKPIN 32
+#define I_LATCHPIN 33
+#define I_DATAPIN 35
+#define I_NINEPIN 36
 //595
-#define O_DATA_PIN 17
-#define O_CLK_PIN 4
-#define O_LATCH_PIN 16
+#define O_DATAPIN 2
+#define O_CLKPIN 21
+#define O_LATCHPIN 4
+#define O_NINEPIN 22
 
 void iBtnHandler();   // 4021
 void oLightHandler(); // 595
 
-long timer, timeStep, serialTimer, serialTimeStep, globalTimer;
-char iBtnState[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+long timer, timeStep, globalTimer;
+int iBtnState[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 char pressedBtn;
-bool oLightSates[] = {1, 1, 1, 1, 1, 1, 1, 1};
+bool oLightSates[] = {1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 void setup()
 {
@@ -23,12 +25,17 @@ void setup()
   Serial.println("START");
 
   //define pin modes
+  //4021
   pinMode(I_LATCHPIN, OUTPUT);
   pinMode(I_CLKPIN, OUTPUT);
   pinMode(I_DATAPIN, INPUT);
-  pinMode(O_DATA_PIN, OUTPUT);
-  pinMode(O_CLK_PIN, OUTPUT);
-  pinMode(O_LATCH_PIN, OUTPUT);
+  pinMode(I_NINEPIN, INPUT);
+
+  //595
+  pinMode(O_DATAPIN, OUTPUT);
+  pinMode(O_CLKPIN, OUTPUT);
+  pinMode(O_LATCHPIN, OUTPUT);
+  pinMode(O_NINEPIN, OUTPUT);
 
   oLightHandler();
 
@@ -37,26 +44,14 @@ void setup()
   //timer
   globalTimer = millis();
   timer = globalTimer;
-  timeStep = 1000;
-  serialTimer = globalTimer;
-  serialTimeStep = 1000;
+  timeStep = 90;
 }
 
 void loop()
 {
   globalTimer = millis();
+  oLightHandler();
   iBtnHandler();
-
-  if (globalTimer - serialTimer > serialTimeStep)
-  {
-    if (pressedBtn != 'q')
-    {
-      Serial.println("====================");
-      Serial.print(pressedBtn);
-      Serial.println(" is pressed.");
-    }
-    serialTimer = globalTimer;
-  }
 }
 
 //CD4021
@@ -76,14 +71,19 @@ void iBtnHandler()
       _value = digitalRead(I_DATAPIN);
       if (_value)
       {
-        pressedBtn = iBtnState[i];
-        break;
-      }
-      else
-      {
-        pressedBtn = 'q';
+        int _btnValue = iBtnState[i];
+        if( pressedBtn != _btnValue){
+          Serial.println(_btnValue);
+          pressedBtn = iBtnState[i];
+        }
       }
       digitalWrite(I_CLKPIN, 1);
+    }
+    int _pinValue = digitalRead(I_NINEPIN);
+    if (_pinValue && pressedBtn !=9)
+    {
+      Serial.print(9);
+      pressedBtn = 9;
     }
 
     timer = globalTimer;
@@ -95,23 +95,23 @@ void oLightHandler()
   if (Serial.available() > 0)
   {
     byte serialIn = Serial.read();
-    if (serialIn >= 48 && serialIn <= 56)
+    if (serialIn >= 49 && serialIn <= 57)
     {
-      oLightSates[serialIn - 48] = 1; // 1 light off
+      oLightSates[serialIn - 49] = 0; // 0 light on
     }
     if (serialIn >= 65 && serialIn <= 73)
     {
-      oLightSates[serialIn - 65] = 0; // 0 light on
+      oLightSates[serialIn - 65] = 1; // 1 light off
     }
-    digitalWrite(O_LATCH_PIN, LOW);
+    digitalWrite(O_LATCHPIN, LOW);
     int i;
     for (i = 0; i < 8; i++)
     {
       int index = 7 - i;
-      digitalWrite(O_DATA_PIN, oLightSates[index]);
-      digitalWrite(O_CLK_PIN, HIGH);
-      digitalWrite(O_CLK_PIN, LOW);
+      digitalWrite(O_DATAPIN, oLightSates[index]);
+      digitalWrite(O_CLKPIN, HIGH);
+      digitalWrite(O_CLKPIN, LOW);
     }
-    digitalWrite(O_LATCH_PIN, HIGH);
+    digitalWrite(O_LATCHPIN, HIGH);
   }
 }
