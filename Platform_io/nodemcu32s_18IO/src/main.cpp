@@ -36,12 +36,11 @@ void setup()
   pinMode(O_LATCHPIN, OUTPUT);
   pinMode(O_NINEPIN, OUTPUT);
 
-  oLightHandler();
-
+  lightControl();                    
   //timer
   globalTimer = millis();
   timer = globalTimer;
-  timeStep = 90;
+  timeStep = 100;
 }
 
 void loop()
@@ -77,7 +76,7 @@ void iBtnHandler()
     int _pinValue = digitalRead(I_NINEPIN);
     if (_pinValue)
     {
-      Serial.print(9);
+      Serial.println(9);
     }
 
     timer = globalTimer;
