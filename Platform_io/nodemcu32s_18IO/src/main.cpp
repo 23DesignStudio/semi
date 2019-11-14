@@ -12,17 +12,16 @@
 
 void iBtnHandler();   // 4021
 void oLightHandler(); // 595
+void lightControl();
 
 long timer, timeStep, globalTimer;
 int iBtnState[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-char pressedBtn;
 bool oLightSates[] = {1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 void setup()
 {
   //start serial
   Serial.begin(9600);
-  Serial.println("START");
 
   //define pin modes
   //4021
@@ -38,8 +37,6 @@ void setup()
   pinMode(O_NINEPIN, OUTPUT);
 
   oLightHandler();
-
-  pressedBtn = 'q';
 
   //timer
   globalTimer = millis();
@@ -57,7 +54,7 @@ void loop()
 //CD4021
 void iBtnHandler()
 {
-  if (globalTimer - timer > timeStep) //check 4021 evey 30ms
+  if (globalTimer - timer > timeStep) //check 4021 evey timeStep
   {
     digitalWrite(I_LATCHPIN, 1); // HIGH -> 4021 collect data
     delayMicroseconds(20);
@@ -71,19 +68,16 @@ void iBtnHandler()
       _value = digitalRead(I_DATAPIN);
       if (_value)
       {
-        int _btnValue = iBtnState[i];
-        if( pressedBtn != _btnValue){
-          Serial.println(_btnValue);
-          pressedBtn = iBtnState[i];
-        }
+        Serial.println(iBtnState[i]);
+
       }
       digitalWrite(I_CLKPIN, 1);
     }
+    //9th input
     int _pinValue = digitalRead(I_NINEPIN);
-    if (_pinValue && pressedBtn !=9)
+    if (_pinValue)
     {
       Serial.print(9);
-      pressedBtn = 9;
     }
 
     timer = globalTimer;
@@ -103,15 +97,20 @@ void oLightHandler()
     {
       oLightSates[serialIn - 65] = 1; // 1 light off
     }
-    digitalWrite(O_LATCHPIN, LOW);
-    int i;
-    for (i = 0; i < 8; i++)
-    {
-      int index = 7 - i;
-      digitalWrite(O_DATAPIN, oLightSates[index]);
-      digitalWrite(O_CLKPIN, HIGH);
-      digitalWrite(O_CLKPIN, LOW);
-    }
-    digitalWrite(O_LATCHPIN, HIGH);
+    lightControl();
   }
+}
+
+void lightControl(){
+  digitalWrite(O_LATCHPIN, LOW);
+  for (int i = 0; i < 8; i++)
+  {
+    int index = 7 - i;
+    digitalWrite(O_DATAPIN, oLightSates[index]);
+    digitalWrite(O_CLKPIN, HIGH);
+    digitalWrite(O_CLKPIN, LOW);
+  }
+  digitalWrite(O_LATCHPIN, HIGH);
+  //9th output
+  digitalWrite(O_NINEPIN, oLightSates[8]);
 }
