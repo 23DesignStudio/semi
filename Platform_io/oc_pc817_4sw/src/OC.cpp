@@ -10,10 +10,10 @@ OC::~OC()
 
 void OC::setup(byte pin, char key)
 {
-  _pin = pin;
-  _key = key;
+  _pin = pin; // Arduino outpout pin
+  _key = key; // letter sent from Unity 
   pinMode(_pin, OUTPUT);
-  digitalWrite(_pin, 1);
+  digitalWrite(_pin, 1); // initiate pin state
 }
 
 bool OC::getState()

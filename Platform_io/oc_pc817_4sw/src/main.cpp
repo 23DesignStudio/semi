@@ -2,13 +2,13 @@
 #include "OC.h"
 #define NUM_OC 4
 
-//NodeMCU32 use GPIO PORT
-
 unsigned long currentTime = 0;
 unsigned long ms = 50;
-OC oc[NUM_OC];
-char keys[] = {'A', 'B', 'C', 'D'};
-char ports[] = {A0, A1, A2, A3};
+
+OC oc[NUM_OC]; // instanciate 4 OC
+char keys[] = {'A', 'B', 'C', 'D'}; //trigger letters defined by Unity
+char ports[] = {A0, A1, A2, A3}; // output pin
+
 void setup()
 {
   for (byte i = 0; i < NUM_OC; i++)
@@ -27,7 +27,7 @@ void loop()
     char input = (char)Serial.read();
     for (byte i = 0; i < NUM_OC; i++)
     {
-      if (input == oc[i].getKey())
+      if (input == oc[i].getKey()) // check which oc should be turn on 
       {
         oc[i].turnOn(currentTime);
         Serial.print(input);
@@ -35,7 +35,7 @@ void loop()
       }
     }
   }
-  for (byte i = 0; i < NUM_OC; i++)
+  for (byte i = 0; i < NUM_OC; i++) // if oc set to on long enough, turn oc off 
   {
     if (oc[i].getState() && oc[i].check(currentTime, ms))
     {
