@@ -1,7 +1,7 @@
 #include "OC.h"
 OC::OC()
 {
-  _state = false;
+  _state = false; //oc state
   _timer = 0;
 }
 OC::~OC()
