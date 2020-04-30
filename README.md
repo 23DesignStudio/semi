@@ -29,6 +29,13 @@ It's about bidirectional communications between Arduino and Unity. Serialport is
 - unity_toArduino: unity c# scripts for gui and gameobject
 
 ## thermo
-This project is a GUI app for thermoprinter built through react.js
+A GUI app for thermoprinter built through react.js
+
+## thermo_realtime (WIP)
+Add more functions such as print graphics based on project "thermo".
+In addition to react.js, this project includes P5.js to handle graphics.
+
+## thermo_server
+A server to communicate between front-end apps (thermo or thermo_realtime) and mcu (arduino or nodemcu32s) by serial port.
 
 
