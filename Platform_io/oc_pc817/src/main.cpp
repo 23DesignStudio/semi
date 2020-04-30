@@ -1,7 +1,5 @@
 #include <Arduino.h>
 #include "OC.h"
-#define NUM_OC 4
-#define BTN 8
 
 unsigned long time;
 unsigned long ms = 80;
